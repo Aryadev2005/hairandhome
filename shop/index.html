@@ -206,7 +206,7 @@ section.block{padding:clamp(3rem,7vw,5.5rem) 0}
 .stickybuy{position:fixed;left:0;right:0;bottom:0;z-index:35;background:rgba(251,252,248,.96);backdrop-filter:blur(8px);border-top:1px solid var(--line);padding:.7rem 4vw;display:none;align-items:center;justify-content:space-between;gap:1rem;transform:translateY(110%);transition:transform .3s}
 .stickybuy.show{transform:none}
 .stickybuy .t{font-family:var(--serif);font-size:1.05rem;line-height:1.2}
-@media (max-width:900px){.stickybuy{display:flex}}
+@media (max-width:900px){.stickybuy{display:flex}body.has-stickybuy{padding-bottom:calc(var(--stickybuy-h,0px) + env(safe-area-inset-bottom,0px))}}
 
 /* drawer */
 .scrim{position:fixed;inset:0;background:rgba(36,41,31,.4);opacity:0;pointer-events:none;transition:opacity .3s;z-index:60}
@@ -344,6 +344,7 @@ footer{background:var(--board);color:#C6CBBB;padding:3.5rem 0 2.5rem;margin-top:
 footer h4{font-family:var(--serif);font-weight:400;font-size:1.2rem;color:var(--cream);margin-bottom:.6rem}
 footer a{text-decoration:none;display:block;font-size:.9rem;margin:.25rem 0}
 footer small{display:block;margin-top:2.5rem;font-size:.75rem;opacity:.7}
+footer small a{display:inline;font-size:inherit;margin:0;text-decoration:underline}
 @media (max-width:760px){.fgrid{grid-template-columns:1fr}}
 
 @media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
@@ -755,7 +756,10 @@ function addPdp(){ add(CURRENT.slug,PQ,true); const u=$("#upsell"); if(u&&u.chec
 $("#sbAdd").onclick=addPdp;
 
 /* sticky mobile buy bar: show once the main Add button scrolls out of view */
-const io = new IntersectionObserver(es=>es.forEach(e=>$("#stickyBuy").classList.toggle("show", !e.isIntersecting && location.hash.startsWith("#/p/"))),{threshold:0});
+const sizeStickyBuy = () => document.body.style.setProperty("--stickybuy-h", $("#stickyBuy").offsetHeight+"px");
+function setStickyBuy(on){ $("#stickyBuy").classList.toggle("show",on); document.body.classList.toggle("has-stickybuy",on); if(on) sizeStickyBuy(); }
+new ResizeObserver(sizeStickyBuy).observe($("#stickyBuy")); /* the product name can wrap, changing the bar's height */
+const io = new IntersectionObserver(es=>es.forEach(e=>setStickyBuy(!e.isIntersecting && location.hash.startsWith("#/p/"))),{threshold:0});
 
 
 /* ===== motion ===== */
@@ -800,7 +804,7 @@ function afterRender(){ const a=$("#app"); a.classList.remove("pagein"); void a.
 function go(h){ location.hash=h; }
 function route(){
   const h = location.hash || "#/";
-  PQ=1; $("#stickyBuy").classList.remove("show"); io.disconnect();
+  PQ=1; setStickyBuy(false); io.disconnect();
   if(h.startsWith("#/p/")){ pdp(h.slice(4)); window.scrollTo(0,0); const b=$("#buyRow"); if(b) io.observe(b); }
   else if(h==="#/gifts"){ home("all","gifts"); }
   else if(h==="#/all"){ home("all","all"); }
