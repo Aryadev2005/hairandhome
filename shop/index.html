@@ -338,8 +338,9 @@ const PRODUCTS = [
    sub:"A festive Nioxin routine for thinning hair",
    what:"A Nioxin system kit with a nourishing anti-breakage step, gift-boxed for Christmas. See the gallery for exactly what's inside.", inside:"See gallery (confirm contents with Sacha)"},
   {slug:"giftset-density-anti-breakage", name:"Density & Anti-Breakage Gift Set", cat:"gift", price:52, gallery:11, badge:"Gift set",
-   sub:"A festive Nioxin routine for thinning hair",
-   what:"A Nioxin system kit focused on density and breakage, gift-boxed for Christmas. See the gallery for exactly what's inside.", inside:"See gallery (confirm contents with Sacha)"},
+   sub:"For natural hair with progressed thinning",
+   what:"Nioxin's 3-step System Kit 2 to boost hair density, plus a free full-size Anti-Breakage Strengthening Mask to help strengthen hair and protect against breakage.",
+   inside:"System Kit 2 (shampoo, conditioner, leave-in treatment) + free full-size Anti-Breakage Strengthening Mask"},
 
   {slug:"hair-booster-serum-100ml", name:"Hair Booster Serum", cat:"serum", price:71.20, gallery:5, badge:"Sacha's pick", hand:true,
    sub:"For progressed thinning · 100ml",
@@ -382,7 +383,14 @@ const $ = (s,el=document)=>el.querySelector(s);
 const gbp = n => "£" + n.toFixed(2);
 const bySlug = s => PRODUCTS.find(p=>p.slug===s);
 const imgSrc = (slug,i=0) => CONFIG.imgDir + "nioxin-420-" + slug + (i? "-"+i : "") + CONFIG.imgExt;
-const img = (p,i=0,cls="") => `<img src="${imgSrc(p.slug,i)}" alt="${p.name}" loading="lazy" class="${cls}" onerror="this.outerHTML='<div class=&quot;ph&quot;>${p.name.replace(/'/g,"")}</div>'">`;
+const img = (p,i=0,cls="") => `<img src="${imgSrc(p.slug,i)}" alt="${p.name}" loading="lazy" class="${cls}" data-slug="${p.slug}" data-i="${i}" onerror="imgFail(this)">`;
+/* missing image: main shot falls back to gallery -1, gallery thumbs hide, anything else shows a soft placeholder */
+function imgFail(el){
+  const slug=el.dataset.slug, i=+el.dataset.i, p=bySlug(slug);
+  if(i===0 && !el.dataset.fb){ el.dataset.fb="1"; el.src=imgSrc(slug,1); return; }
+  const thumb=el.closest(".thumbs button"); if(thumb){ thumb.remove(); return; }
+  el.outerHTML='<div class="ph">'+(p?p.name:"")+'</div>';
+}
 const icon = {
   pin:'<svg viewBox="0 0 24 24" fill="none" stroke-width="1.6"><path d="M12 21s-7-6.2-7-11a7 7 0 1 1 14 0c0 4.8-7 11-7 11Z"/><circle cx="12" cy="10" r="2.5"/></svg>',
   van:'<svg viewBox="0 0 24 24" fill="none" stroke-width="1.6"><path d="M3 7h11v9H3zM14 10h4l3 3v3h-7"/><circle cx="7" cy="17.5" r="1.6"/><circle cx="17" cy="17.5" r="1.6"/></svg>',
