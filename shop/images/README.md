@@ -1,0 +1,3 @@
+Put the official Nioxin product images here (the files named `nioxin-420-*.jpg`
+from WellaOne). Main shot: `nioxin-420-<slug>.jpg`; gallery: `nioxin-420-<slug>-1.jpg`, `-2.jpg`, ...
+Until they are added, the shop shows soft placeholders.

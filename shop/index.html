@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Shop Nioxin &amp; Gift Sets | Hair &amp; Home, Rose Lane, Liverpool</title>
+<meta name="description" content="Salon-chosen Nioxin haircare and Christmas gift sets from Hair & Home, Rose Lane, Liverpool. Free click & collect, local delivery and a free scalp check with Sacha.">
+<!--
+  HAIR & HOME SHOP — developer notes
+  ------------------------------------------------------------
+  1. IMAGES: put the downloaded files (the ones starting "nioxin-420-") in an
+     /images folder next to this file. Main shot = nioxin-420-<slug>.jpg,
+     gallery = nioxin-420-<slug>-1.jpg, -2.jpg ... (counts are in PRODUCTS below).
+     Missing images fall back to a soft placeholder automatically.
+  2. CONFIG: prices, delivery fees, Christmas cut-off, booking + reviews links
+     are all in the CONFIG / PRODUCTS objects at the top of the <script>.
+     Confirm every price and gift-set content with Sacha before launch.
+  3. CHECKOUT: checkout() builds the line items. Wire it to a small server
+     endpoint that creates a Stripe Checkout Session (card, Apple Pay,
+     Google Pay, PayPal) and redirect to session.url.
+  4. Do not add Wella/Nioxin logos until Sacha's rep confirms brand guidelines.
+-->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Amatic+SC:wght@700&family=Gilda+Display&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#EEF2E6; --paper-2:#F7F9F2; --card:#FBFCF8; --mist:#E1E8D4;
+  --sage:#7C8C6A; --sage-deep:#4E5B43; --board:#24291F;
+  --ink:#2A2E26; --muted:#5D6455; --line:#CBD3BE; --wheat:#C9B285; --cream:#F8F5EA;
+  --serif:"Gilda Display", Georgia, serif;
+  --sans:"Jost", system-ui, sans-serif;
+  --hand:"Amatic SC", "Comic Sans MS", cursive;
+  --r:22px; --pill:999px;
+  --shadow:0 18px 40px -24px rgba(36,41,31,.35);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--sans);font-weight:400;color:var(--ink);background:var(--paper);line-height:1.6;-webkit-font-smoothing:antialiased}
+img{display:block;max-width:100%}
+a{color:inherit}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+.wrap{width:min(1200px,92vw);margin-inline:auto}
+.eyebrow{font-size:.72rem;letter-spacing:.22em;text-transform:uppercase;color:var(--sage)}
+h1,h2,h3,.serif{font-family:var(--serif);font-weight:400;line-height:1.08;letter-spacing:-.01em}
+.hand{font-family:var(--hand);font-weight:700;letter-spacing:.04em}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+
+/* buttons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:.6em;border-radius:var(--pill);padding:.95em 1.7em;font-size:.78rem;letter-spacing:.16em;text-transform:uppercase;font-weight:500;transition:transform .2s, background .2s, color .2s;text-decoration:none;white-space:nowrap}
+.btn:active{transform:scale(.98)}
+.btn.solid{background:var(--sage-deep);color:var(--cream)}
+.btn.solid:hover{background:var(--board)}
+.btn.ghost{border:1px solid var(--ink);}
+.btn.ghost:hover{background:var(--ink);color:var(--cream)}
+.btn.light{background:var(--cream);color:var(--sage-deep)}
+.btn.block{width:100%}
+
+/* announcement + header */
+.announce{background:var(--sage-deep);color:var(--cream);text-align:center;font-size:.78rem;letter-spacing:.08em;padding:.6em 1em}
+.announce b{font-weight:500;color:var(--wheat)}
+header.site{position:sticky;top:0;z-index:40;background:rgba(238,242,230,.92);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.hdr{display:flex;align-items:center;justify-content:space-between;gap:1rem;height:72px}
+.logo{text-decoration:none;line-height:1}
+.logo .n{font-family:var(--serif);font-size:1.45rem}
+.logo .s{display:block;font-size:.62rem;letter-spacing:.24em;text-transform:uppercase;color:var(--sage);margin-top:.35em}
+nav.main{display:flex;gap:2rem}
+nav.main a{text-decoration:none;font-size:.74rem;letter-spacing:.16em;text-transform:uppercase;opacity:.8}
+nav.main a:hover{opacity:1}
+.bagbtn{display:flex;align-items:center;gap:.6em;border:1px solid var(--ink);border-radius:var(--pill);padding:.5em .55em .5em 1.1em;font-size:.72rem;letter-spacing:.16em;text-transform:uppercase}
+.bagbtn .c{display:grid;place-items:center;min-width:26px;height:26px;border-radius:50%;background:var(--sage-deep);color:var(--cream);font-size:.75rem;letter-spacing:0}
+@media (max-width:820px){nav.main{display:none}}
+
+/* hero */
+.hero{padding:clamp(2.5rem,6vw,5rem) 0 clamp(2rem,5vw,4rem)}
+.hero-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:clamp(2rem,5vw,4rem);align-items:center}
+.hero h1{font-size:clamp(2.6rem,6.2vw,5rem);margin:.5rem 0 1.2rem}
+.hero p.lead{font-size:1.08rem;color:var(--muted);max-width:30em}
+.hero .ctas{display:flex;flex-wrap:wrap;gap:.8rem;margin:2rem 0 2.2rem}
+.trust{display:flex;flex-wrap:wrap;gap:.6rem 1.6rem;font-size:.82rem;color:var(--muted)}
+.trust span{display:flex;align-items:center;gap:.45em}
+.trust svg{width:16px;height:16px;stroke:var(--sage-deep)}
+.hero-art{position:relative;aspect-ratio:1/1.02;border-radius:28px;background:radial-gradient(120% 90% at 70% 20%,var(--card),var(--mist));overflow:hidden;box-shadow:var(--shadow)}
+.hero-art img{position:absolute;inset:8%;width:84%;height:84%;object-fit:contain;mix-blend-mode:multiply}
+.hero-art.photo img{inset:0;width:100%;height:100%;object-fit:cover;mix-blend-mode:normal}
+.hero-art .tag{position:absolute;left:6%;bottom:6%;background:var(--cream);border:1px solid var(--line);border-radius:16px;padding:.8rem 1.1rem;max-width:62%}
+.hero-art .tag .hand{font-size:1.35rem;color:#8B7355;display:block;line-height:1}
+.hero-art .tag small{font-size:.8rem;color:var(--muted)}
+.hero-art .price-pill{position:absolute;right:6%;top:6%;background:var(--sage-deep);color:var(--cream);border-radius:var(--pill);padding:.45em 1em;font-size:.8rem;letter-spacing:.06em}
+@media (max-width:860px){.hero-grid{grid-template-columns:1fr}.hero-art{max-width:520px}}
+
+/* sections */
+section.block{padding:clamp(3rem,7vw,5.5rem) 0}
+.sec-head{display:flex;align-items:end;justify-content:space-between;gap:1.5rem;border-bottom:1px solid var(--line);padding-bottom:1.2rem;margin-bottom:2rem;flex-wrap:wrap}
+.sec-head h2{font-size:clamp(2rem,4vw,3rem)}
+.sec-head p{color:var(--muted);max-width:32em;font-size:.95rem}
+
+/* product cards */
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1.25rem}
+.grid.three{grid-template-columns:repeat(3,1fr)}
+@media (max-width:1000px){.grid{grid-template-columns:repeat(3,1fr)}}
+@media (max-width:760px){.grid,.grid.three{grid-template-columns:repeat(2,1fr);gap:.8rem}}
+.card{position:relative;display:flex;flex-direction:column;background:var(--card);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;transition:box-shadow .3s, transform .3s}
+.card:hover{box-shadow:var(--shadow);transform:translateY(-2px)}
+.card .media{position:relative;aspect-ratio:1/1;background:var(--paper-2);cursor:pointer;overflow:hidden}
+.card .media img{width:100%;height:100%;object-fit:contain;padding:10%;mix-blend-mode:multiply;transition:transform .5s ease}
+.card:hover .media img{transform:scale(1.05)}
+.badge{position:absolute;top:12px;left:12px;z-index:2;border-radius:var(--pill);padding:.25em .8em;font-size:.68rem;letter-spacing:.08em;background:var(--cream);border:1px solid var(--wheat);color:#8B7355}
+.badge.gift{background:var(--sage-deep);border-color:var(--sage-deep);color:var(--cream)}
+.badge.hand{font-size:1rem;padding:.05em .7em;letter-spacing:.05em}
+.card .body{padding:1rem 1.1rem 1.15rem;display:flex;flex-direction:column;gap:.25rem;flex:1}
+.card h3{font-size:1.18rem;cursor:pointer}
+.card .sub{font-size:.82rem;color:var(--muted)}
+.card .foot{display:flex;align-items:center;justify-content:space-between;gap:.5rem;margin-top:auto;padding-top:.8rem}
+.price{font-family:var(--sans);font-weight:500;font-size:1.02rem;letter-spacing:.01em}
+.add{display:inline-flex;align-items:center;gap:.4em;border-radius:var(--pill);background:var(--sage-deep);color:var(--cream);padding:.6em 1em;font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;transition:background .2s}
+.add:hover{background:var(--board)}
+.add.done{background:var(--sage)}
+@media (max-width:520px){.card .body{padding:.8rem}.card h3{font-size:1rem}.add{padding:.55em .8em;font-size:.6rem}.card .foot{flex-direction:column;align-items:stretch}.add{justify-content:center}}
+
+/* chips */
+.chips{display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:1.6rem}
+.chip{border:1px solid var(--line);border-radius:var(--pill);padding:.5em 1.1em;font-size:.82rem;background:var(--paper-2)}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--cream);border-color:var(--ink)}
+
+/* quiz */
+.quiz{background:var(--card);border:1px solid var(--line);border-radius:28px;padding:clamp(1.5rem,4vw,3rem);display:grid;grid-template-columns:1fr 1fr;gap:clamp(1.5rem,4vw,3rem)}
+.quiz h2{font-size:clamp(2rem,4vw,2.8rem);margin:.4rem 0 .8rem}
+.quiz .q{margin-bottom:1.4rem}
+.quiz .q p{font-size:.9rem;margin-bottom:.6rem;color:var(--muted)}
+.opts{display:flex;flex-wrap:wrap;gap:.5rem}
+.opt{border:1px solid var(--line);border-radius:var(--pill);padding:.7em 1.2em;font-size:.88rem;background:var(--paper-2);transition:all .2s}
+.opt[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:var(--cream)}
+.match{display:grid;grid-template-columns:110px 1fr;gap:1.2rem;align-items:center;background:var(--paper);border:1px solid var(--line);border-radius:var(--r);padding:1.1rem;margin-top:.4rem}
+.match img{width:110px;height:110px;object-fit:contain;mix-blend-mode:multiply}
+.match h3{font-size:1.6rem;margin:.1rem 0}
+.match .row{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:.7rem}
+@media (max-width:860px){.quiz{grid-template-columns:1fr}}
+
+/* why */
+.why{display:grid;grid-template-columns:repeat(4,1fr);gap:1.2rem}
+.why div{border-top:1px solid var(--ink);padding-top:1rem}
+.why h3{font-size:1.3rem;margin-bottom:.35rem}
+.why p{font-size:.9rem;color:var(--muted)}
+@media (max-width:860px){.why{grid-template-columns:repeat(2,1fr)}}
+
+/* note + banner */
+.note{display:grid;grid-template-columns:150px 1fr;gap:2rem;align-items:center;background:var(--cream);border:1px solid #E6DEC8;border-radius:28px;padding:clamp(1.5rem,4vw,2.8rem)}
+.avatar{width:150px;height:150px;border-radius:50%;background:var(--sage-deep);color:var(--cream);display:grid;place-items:center;font-family:var(--serif);font-size:3.4rem;overflow:hidden;box-shadow:0 0 0 6px var(--cream),0 0 0 7px #E6DEC8}
+.avatar img{width:100%;height:100%;object-fit:cover}
+.note .hand{font-size:1.7rem;color:#8B7355}
+.note blockquote{font-family:var(--serif);font-size:clamp(1.3rem,2.6vw,1.9rem);line-height:1.3;margin:.3rem 0 .9rem}
+.note cite{font-style:normal;font-size:.82rem;color:var(--muted)}
+@media (max-width:640px){.note{grid-template-columns:1fr}.avatar{width:96px;height:96px;font-size:2.2rem}}
+.banner{position:relative;overflow:hidden;background:var(--sage-deep);color:var(--cream);border-radius:28px;padding:clamp(1.8rem,5vw,3.2rem);display:flex;align-items:center;justify-content:space-between;gap:1.5rem;flex-wrap:wrap}
+.banner h2{font-size:clamp(1.9rem,4vw,2.8rem);margin:.3rem 0 .5rem}
+.banner p{opacity:.85;max-width:34em}
+.banner .eyebrow{color:var(--wheat)}
+.banner::after{content:"";position:absolute;right:-60px;top:-60px;width:260px;height:260px;border-radius:50%;border:1px solid rgba(248,245,234,.18);box-shadow:0 0 0 40px rgba(248,245,234,.04),0 0 0 80px rgba(248,245,234,.03)}
+
+/* reviews + faq */
+.reviews{display:flex;align-items:center;justify-content:space-between;gap:1.5rem;flex-wrap:wrap;border:1px dashed var(--line);border-radius:var(--r);padding:1.6rem}
+.faq details{border-bottom:1px solid var(--line);padding:1.1rem 0}
+.faq summary{list-style:none;cursor:pointer;display:flex;justify-content:space-between;gap:1rem;font-size:1.05rem}
+.faq summary::after{content:"+";font-size:1.4rem;line-height:1;color:var(--sage-deep);transition:transform .2s}
+.faq details[open] summary::after{transform:rotate(45deg)}
+.faq details p{color:var(--muted);margin-top:.6rem;max-width:46em;font-size:.95rem}
+
+/* product page */
+.crumbs{font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;color:var(--sage);padding:1.6rem 0}
+.crumbs a{text-decoration:none}
+.pdp{display:grid;grid-template-columns:1.05fr .95fr;gap:clamp(1.5rem,4vw,3.5rem);align-items:start;padding-bottom:3rem}
+.gallery .main{position:relative;aspect-ratio:1/1;background:var(--card);border:1px solid var(--line);border-radius:28px;overflow:hidden;cursor:zoom-in}
+.gallery .main img{width:100%;height:100%;object-fit:contain;padding:8%;mix-blend-mode:multiply;transition:transform .35s ease;transform-origin:var(--zx,50%) var(--zy,50%)}
+.gallery .main.zoom img{transform:scale(1.8)}
+.thumbs{display:flex;gap:.6rem;margin-top:.8rem;overflow-x:auto;padding-bottom:.3rem;scrollbar-width:thin}
+.thumbs button{flex:0 0 72px;height:72px;border:1px solid var(--line);border-radius:14px;background:var(--card);overflow:hidden;opacity:.7}
+.thumbs button[aria-current="true"]{border-color:var(--ink);opacity:1}
+.thumbs img{width:100%;height:100%;object-fit:contain;padding:8%;mix-blend-mode:multiply}
+.info{position:sticky;top:96px}
+.info .badges{display:flex;gap:.5rem;margin-bottom:.9rem;flex-wrap:wrap}
+.info .badges .badge{position:static}
+.info h1{font-size:clamp(2.1rem,4.4vw,3.2rem)}
+.info .sub{color:var(--muted);margin:.5rem 0 1.1rem}
+.info .pr{display:flex;align-items:baseline;gap:1rem;margin-bottom:1.3rem}
+.info .pr .price{font-size:1.6rem}
+.stock{font-size:.82rem;color:var(--sage-deep);display:flex;align-items:center;gap:.4em}
+.stock::before{content:"";width:7px;height:7px;border-radius:50%;background:#6E9A57}
+.buy{display:flex;gap:.7rem;margin:1rem 0}
+.qty{display:flex;align-items:center;border:1px solid var(--line);border-radius:var(--pill);background:var(--card)}
+.qty button{width:42px;height:48px;font-size:1.2rem}
+.qty span{min-width:22px;text-align:center}
+.buy .btn{flex:1}
+.upsell{display:flex;gap:.9rem;align-items:center;border:1px solid var(--line);border-radius:18px;background:var(--card);padding:.8rem;margin:.6rem 0 1.2rem;cursor:pointer}
+.upsell img{width:58px;height:58px;object-fit:contain;mix-blend-mode:multiply}
+.upsell input{width:20px;height:20px;accent-color:var(--sage-deep)}
+.upsell small{display:block;color:var(--muted)}
+.perks{list-style:none;display:grid;gap:.55rem;font-size:.88rem;color:var(--muted);border-top:1px solid var(--line);padding-top:1.1rem}
+.perks li{display:flex;gap:.6em;align-items:flex-start}
+.perks svg{flex:0 0 18px;width:18px;height:18px;stroke:var(--sage-deep);margin-top:.15em}
+.acc{margin-top:1.2rem}
+@media (max-width:900px){.pdp{grid-template-columns:1fr}.info{position:static}}
+.stickybuy{position:fixed;left:0;right:0;bottom:0;z-index:35;background:rgba(251,252,248,.96);backdrop-filter:blur(8px);border-top:1px solid var(--line);padding:.7rem 4vw;display:none;align-items:center;justify-content:space-between;gap:1rem;transform:translateY(110%);transition:transform .3s}
+.stickybuy.show{transform:none}
+.stickybuy .t{font-family:var(--serif);font-size:1.05rem;line-height:1.2}
+@media (max-width:900px){.stickybuy{display:flex}}
+
+/* drawer */
+.scrim{position:fixed;inset:0;background:rgba(36,41,31,.4);opacity:0;pointer-events:none;transition:opacity .3s;z-index:60}
+.scrim.open{opacity:1;pointer-events:auto}
+.drawer{position:fixed;top:0;right:0;bottom:0;width:min(440px,100vw);background:var(--paper);z-index:61;transform:translateX(100%);transition:transform .35s cubic-bezier(.2,.8,.2,1);display:flex;flex-direction:column}
+.drawer.open{transform:none}
+.dhead{display:flex;justify-content:space-between;align-items:center;padding:1.2rem 1.4rem;border-bottom:1px solid var(--line)}
+.dhead h2{font-size:1.7rem}
+.dbody{flex:1;overflow-y:auto;padding:1.2rem 1.4rem}
+.ship{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:.8rem 1rem;font-size:.85rem;margin-bottom:1rem}
+.bar{height:6px;border-radius:6px;background:var(--mist);margin-top:.5rem;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--sage-deep);transition:width .4s}
+.line{display:grid;grid-template-columns:72px 1fr auto;gap:.9rem;align-items:center;padding:.9rem 0;border-bottom:1px solid var(--line)}
+.line img{width:72px;height:72px;object-fit:contain;background:var(--card);border-radius:12px;border:1px solid var(--line);padding:6%;mix-blend-mode:multiply}
+.line .nm{font-family:var(--serif);font-size:1.02rem;line-height:1.2}
+.line .mini{display:flex;align-items:center;gap:.4rem;margin-top:.35rem}
+.line .mini button{width:26px;height:26px;border:1px solid var(--line);border-radius:50%;font-size:.9rem}
+.line .mini .rm{border:0;width:auto;height:auto;border-radius:0;font-size:.72rem;color:var(--muted);text-decoration:underline;margin-left:.4rem}
+.empty{text-align:center;color:var(--muted);padding:3rem 0}
+.dfoot{border-top:1px solid var(--line);padding:1.1rem 1.4rem 1.4rem;background:var(--paper-2)}
+.dopt{display:grid;gap:.5rem;margin-bottom:.9rem}
+.dopt label{display:flex;justify-content:space-between;align-items:center;gap:.6rem;border:1px solid var(--line);border-radius:14px;padding:.65rem .85rem;font-size:.86rem;background:var(--card);cursor:pointer}
+.dopt input{accent-color:var(--sage-deep)}
+.giftnote summary{cursor:pointer;font-size:.86rem;color:var(--sage-deep);margin-bottom:.6rem}
+.giftnote textarea{width:100%;min-height:70px;border:1px solid var(--line);border-radius:12px;padding:.6rem;font:inherit;font-size:.88rem;background:var(--card);resize:vertical}
+.tot{display:flex;justify-content:space-between;font-size:1.05rem;margin:.6rem 0 .9rem}
+.pay{display:flex;justify-content:center;gap:.8rem;font-size:.72rem;color:var(--muted);margin-top:.7rem;letter-spacing:.06em}
+.toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,calc(100% + 60px));visibility:hidden;background:var(--ink);color:var(--cream);padding:.8rem 1.2rem;border-radius:var(--pill);font-size:.85rem;z-index:80;transition:transform .3s}
+.toast.show{transform:translate(-50%,0);visibility:visible}
+
+/* placeholder for missing images */
+.ph{width:100%;height:100%;display:grid;place-items:center;text-align:center;font-family:var(--serif);color:var(--sage);padding:12%;font-size:1rem;background:repeating-linear-gradient(135deg,var(--paper-2) 0 14px,var(--card) 14px 28px)}
+
+.upsell .ph{flex:0 0 58px;width:58px;height:58px;font-size:0;padding:0;border-radius:10px}
+.line .ph{width:72px;height:72px;font-size:0;border-radius:12px}
+.match .ph{width:110px;height:110px;font-size:0;border-radius:14px}
+.thumbs .ph{font-size:0}
+footer{background:var(--board);color:#C6CBBB;padding:3.5rem 0 2.5rem;margin-top:2rem}
+.fgrid{display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:2rem}
+footer h4{font-family:var(--serif);font-weight:400;font-size:1.2rem;color:var(--cream);margin-bottom:.6rem}
+footer a{text-decoration:none;display:block;font-size:.9rem;margin:.25rem 0}
+footer small{display:block;margin-top:2.5rem;font-size:.75rem;opacity:.7}
+@media (max-width:760px){.fgrid{grid-template-columns:1fr}}
+
+@media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+
+<div class="announce" id="announce"></div>
+
+<header class="site">
+  <div class="wrap hdr">
+    <a class="logo" href="#/"><span class="n">Hair &amp; Home</span><span class="s">Shop · Rose Lane</span></a>
+    <nav class="main" aria-label="Shop">
+      <a href="#/gifts">Gift sets</a>
+      <a href="#/all">Thinning hair</a>
+      <a href="#/quiz">Find my system</a>
+      <a href="#/scalp">Scalp check</a>
+      <a href="../">Salon</a>
+    </nav>
+    <button class="bagbtn" id="bagBtn" aria-label="Open bag">Bag <span class="c" id="bagCount">0</span></button>
+  </div>
+</header>
+
+<main id="app"></main>
+
+<footer>
+  <div class="wrap">
+    <div class="fgrid">
+      <div>
+        <h4>Hair &amp; Home</h4>
+        <p style="max-width:26em;font-size:.9rem">Hair appointments and curated homeware, under one roof on Rose Lane, Liverpool. Every product in the shop is one Sacha uses and recommends in the salon.</p>
+      </div>
+      <div>
+        <h4>Shop</h4>
+        <a href="#/gifts">Christmas gift sets</a>
+        <a href="#/all">Thinning hair</a>
+        <a href="#/quiz">Find my system</a>
+      </div>
+      <div>
+        <h4>Help</h4>
+        <a href="#/faq">Delivery &amp; collection</a>
+        <a href="#/faq">Returns</a>
+        <a id="footBook" href="#">Book a scalp check</a>
+      </div>
+    </div>
+    <small>© Hair &amp; Home, Rose Lane, Liverpool. Secure checkout by Stripe.</small>
+  </div>
+</footer>
+
+<div class="stickybuy" id="stickyBuy" aria-hidden="true">
+  <div><div class="t" id="sbName"></div><div class="price" id="sbPrice"></div></div>
+  <button class="btn solid" id="sbAdd">Add to bag</button>
+</div>
+
+<div class="scrim" id="scrim"></div>
+<aside class="drawer" id="drawer" aria-label="Your bag" aria-hidden="true">
+  <div class="dhead"><h2>Your bag</h2><button id="closeBag" aria-label="Close bag" style="font-size:1.6rem">&times;</button></div>
+  <div class="dbody" id="dbody"></div>
+  <div class="dfoot" id="dfoot"></div>
+</aside>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+/* ================= CONFIG — edit these ================= */
+const CONFIG = {
+  imgDir: "images/",  // put the nioxin-420-*.jpg files in shop/images/
+  imgExt: ".jpg",
+  freeDeliveryOver: 50,          // £ — local delivery free above this
+  deliveryFee: 3.95,             // £ — local Liverpool delivery
+  christmasCutoff: "19 December",// TODO confirm with Sacha
+  bookingUrl: "https://booksy.com/en-gb/dl/show-business/47975",
+  reviewsUrl: "#",               // TODO Google reviews link
+  sachaPhoto: "",                // e.g. "images/sacha.jpg"
+  heroImage: "giftset-thickening-nourishing-anti-breakage", // product shown if heroPhoto is empty
+  heroPhoto: "../img/shop-shelves.jpg", // real salon photo
+};
+
+/* Prices are retail prices to CONFIRM with Sacha before launch. */
+const PRODUCTS = [
+  {slug:"giftset-thickening-nourishing-anti-breakage", name:"Thickening, Nourishing & Anti-Breakage Gift Set", cat:"gift", price:52, gallery:11, badge:"Gift set",
+   sub:"For coloured or dry hair with light thinning",
+   what:"Nioxin's 3-step System Kit 3, formulated with niacinamide and biotin, plus a free full-size Anti-Breakage Strengthening Mask to help strengthen hair and reduce breakage.",
+   inside:"System Kit 3 (shampoo, conditioner, leave-in treatment) + full-size Anti-Breakage Strengthening Mask"},
+  {slug:"giftset-thickening-anti-breakage", name:"Thickening & Anti-Breakage Gift Set", cat:"gift", price:52, gallery:11, badge:"Gift set",
+   sub:"A festive Nioxin routine for thinning hair",
+   what:"A Nioxin system kit for fuller-looking hair, gift-boxed for Christmas. See the gallery for exactly what's inside.", inside:"See gallery (confirm contents with Sacha)"},
+  {slug:"giftset-density-nourishing-anti-breakage", name:"Density, Nourishing & Anti-Breakage Gift Set", cat:"gift", price:52, gallery:11, badge:"Gift set",
+   sub:"A festive Nioxin routine for thinning hair",
+   what:"A Nioxin system kit with a nourishing anti-breakage step, gift-boxed for Christmas. See the gallery for exactly what's inside.", inside:"See gallery (confirm contents with Sacha)"},
+  {slug:"giftset-density-anti-breakage", name:"Density & Anti-Breakage Gift Set", cat:"gift", price:52, gallery:11, badge:"Gift set",
+   sub:"A festive Nioxin routine for thinning hair",
+   what:"A Nioxin system kit focused on density and breakage, gift-boxed for Christmas. See the gallery for exactly what's inside.", inside:"See gallery (confirm contents with Sacha)"},
+
+  {slug:"hair-booster-serum-100ml", name:"Hair Booster Serum", cat:"serum", price:71.20, gallery:5, badge:"Sacha's pick", hand:true,
+   sub:"For progressed thinning · 100ml",
+   what:"A targeted leave-in treatment from Nioxin for areas of progressed thinning. Apply to the scalp where hair looks thinnest."},
+  {slug:"diaboost-serum-100ml", name:"Diaboost Thickening Serum", cat:"serum", price:63.20, gallery:8,
+   sub:"Leave-in thickening treatment · 100ml",
+   what:"A leave-in thickening serum from Nioxin's Density Defend range that helps hair look and feel fuller."},
+  {slug:"night-density-rescue-serum-70ml", name:"Night Density Rescue Serum", cat:"serum", price:63.20, gallery:5,
+   sub:"Overnight thickening treatment · 70ml",
+   what:"An overnight leave-in treatment from Nioxin to support fuller-looking hair while you sleep."},
+  {slug:"hair-fall-defense-serum-70ml", name:"Hair Fall Defense Serum", cat:"serum", price:57.50, gallery:7,
+   sub:"Nioxin Hair Fall Defense range · 70ml",
+   what:"A leave-in serum from Nioxin's Hair Fall Defense range, designed for daily scalp care."},
+
+  {slug:"system1-trial-kit", name:"System 1 Trial Kit", cat:"kit", sys:1, price:42.75, gallery:7, badge:"Salon favourite", hand:true,
+   sub:"Natural hair · light thinning · 30-day size", what:"Nioxin's 3-step system for natural hair with light thinning: cleanse, condition and treat the scalp for fuller-looking hair."},
+  {slug:"system2-trial-kit", name:"System 2 Trial Kit", cat:"kit", sys:2, price:42.75, gallery:7, badge:"Salon favourite", hand:true,
+   sub:"Natural hair · progressed thinning · 30-day size", what:"Nioxin's 3-step system for natural hair with progressed thinning: cleanse, condition and treat the scalp for fuller-looking hair."},
+  {slug:"system3-trial-kit", name:"System 3 Trial Kit", cat:"kit", sys:3, price:42.75, gallery:7,
+   sub:"Coloured hair · light thinning · 30-day size", what:"Nioxin's 3-step system for coloured, dry or damaged hair with light thinning, with colour-safe care."},
+  {slug:"system4-trial-kit", name:"System 4 Trial Kit", cat:"kit", sys:4, price:42.75, gallery:7,
+   sub:"Coloured hair · progressed thinning · 30-day size", what:"Nioxin's 3-step system for coloured, dry or damaged hair with progressed thinning, with colour-safe care."},
+  {slug:"system1-loyalty-kit", name:"System 1 Loyalty Kit", cat:"kit", sys:1, price:67, gallery:8,
+   sub:"Natural hair · light thinning · larger sizes", what:"The full-size System 1 routine for when you know it works for you."},
+  {slug:"system3-loyalty-kit", name:"System 3 Loyalty Kit", cat:"kit", sys:3, price:67, gallery:7,
+   sub:"Coloured hair · light thinning · larger sizes", what:"The full-size System 3 routine for when you know it works for you."},
+  {slug:"system4-loyalty-kit", name:"System 4 Loyalty Kit", cat:"kit", sys:4, price:67, gallery:7,
+   sub:"Coloured hair · progressed thinning · larger sizes", what:"The full-size System 4 routine for when you know it works for you."},
+
+  {slug:"scalp-recovery-kit", name:"Scalp Recovery Kit", cat:"scalp", price:59.60, gallery:8,
+   sub:"For flaky, itchy-feeling scalps", what:"Nioxin's Scalp Recovery routine to cleanse, soothe and rebalance the scalp."},
+  {slug:"scalp-recovery-soothing-serum-100ml", name:"Scalp Recovery Soothing Serum", cat:"scalp", price:31.50, gallery:9,
+   sub:"Leave-in scalp serum · 100ml", what:"A leave-in soothing serum from Nioxin's Scalp Recovery range for a calmer-feeling scalp."},
+];
+const PAIRS = { gift:"hair-booster-serum-100ml", kit:"hair-booster-serum-100ml", serum:"system2-trial-kit", scalp:"scalp-recovery-soothing-serum-100ml" };
+const CATS = {all:"Everything", gift:"Gift sets", kit:"System kits", serum:"Serums", scalp:"Scalp care"};
+
+/* ================= helpers ================= */
+const $ = (s,el=document)=>el.querySelector(s);
+const gbp = n => "£" + n.toFixed(2);
+const bySlug = s => PRODUCTS.find(p=>p.slug===s);
+const imgSrc = (slug,i=0) => CONFIG.imgDir + "nioxin-420-" + slug + (i? "-"+i : "") + CONFIG.imgExt;
+const img = (p,i=0,cls="") => `<img src="${imgSrc(p.slug,i)}" alt="${p.name}" loading="lazy" class="${cls}" onerror="this.outerHTML='<div class=&quot;ph&quot;>${p.name.replace(/'/g,"")}</div>'">`;
+const icon = {
+  pin:'<svg viewBox="0 0 24 24" fill="none" stroke-width="1.6"><path d="M12 21s-7-6.2-7-11a7 7 0 1 1 14 0c0 4.8-7 11-7 11Z"/><circle cx="12" cy="10" r="2.5"/></svg>',
+  van:'<svg viewBox="0 0 24 24" fill="none" stroke-width="1.6"><path d="M3 7h11v9H3zM14 10h4l3 3v3h-7"/><circle cx="7" cy="17.5" r="1.6"/><circle cx="17" cy="17.5" r="1.6"/></svg>',
+  lock:'<svg viewBox="0 0 24 24" fill="none" stroke-width="1.6"><rect x="5" y="10" width="14" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>',
+  ret:'<svg viewBox="0 0 24 24" fill="none" stroke-width="1.6"><path d="M4 9h11a5 5 0 0 1 0 10H8"/><path d="M8 5 4 9l4 4"/></svg>',
+  star:'<svg viewBox="0 0 24 24" fill="none" stroke-width="1.6"><path d="m12 3 2.6 5.6 6 .7-4.5 4.1 1.2 6L12 16.5 6.7 19.4l1.2-6L3.4 9.3l6-.7z"/></svg>',
+};
+const toast = msg => { const t=$("#toast"); t.textContent=msg; t.classList.add("show"); clearTimeout(t._h); t._h=setTimeout(()=>t.classList.remove("show"),2200); };
+
+/* ================= bag (state kept in memory; persists while the tab is open) ================= */
+let BAG = [];
+try { BAG = JSON.parse(localStorage.getItem("hh_bag")||"[]"); } catch(e) { BAG=[]; }
+let DELIVERY = "collect", NOTE = "";
+const save = ()=>{ try{ localStorage.setItem("hh_bag", JSON.stringify(BAG)); }catch(e){} };
+const bagQty = ()=> BAG.reduce((a,b)=>a+b.q,0);
+const subtotal = ()=> BAG.reduce((a,b)=>a+bySlug(b.s).price*b.q,0);
+function add(slug,q=1,silent){ const l=BAG.find(x=>x.s===slug); l? l.q+=q : BAG.push({s:slug,q}); save(); renderBag(); if(!silent){ toast("Added to your bag"); } }
+function setQ(slug,q){ const l=BAG.find(x=>x.s===slug); if(!l) return; l.q=q; if(l.q<=0) BAG=BAG.filter(x=>x.s!==slug); save(); renderBag(); }
+
+function renderBag(){
+  $("#bagCount").textContent = bagQty();
+  const sub = subtotal(), need = Math.max(0, CONFIG.freeDeliveryOver - sub);
+  const pct = Math.min(100, sub/CONFIG.freeDeliveryOver*100);
+  if(!BAG.length){
+    $("#dbody").innerHTML = `<div class="empty"><p class="serif" style="font-size:1.5rem;color:var(--ink)">Your bag is empty</p><p style="margin:.4rem 0 1.4rem">Not sure where to start?</p><a class="btn ghost" href="#/quiz" onclick="closeBag()">Find my system</a></div>`;
+    $("#dfoot").innerHTML = ""; return;
+  }
+  $("#dbody").innerHTML = `
+    <div class="ship">${ need>0 ? `You're <b>${gbp(need)}</b> away from free local delivery` : `<b>You've unlocked free local delivery</b> 🎉` } · click &amp; collect is always free
+      <div class="bar"><i style="width:${pct}%"></i></div></div>
+    ${BAG.map(l=>{const p=bySlug(l.s); return `
+      <div class="line">${img(p)}
+        <div><div class="nm">${p.name}</div><div style="font-size:.78rem;color:var(--muted)">${p.sub}</div>
+          <div class="mini"><button aria-label="Less" onclick="setQ('${p.slug}',${l.q-1})">−</button><span>${l.q}</span><button aria-label="More" onclick="setQ('${p.slug}',${l.q+1})">+</button><button class="rm" onclick="setQ('${p.slug}',0)">Remove</button></div></div>
+        <div class="price">${gbp(p.price*l.q)}</div></div>`}).join("")}`;
+  const fee = DELIVERY==="deliver" && need>0 ? CONFIG.deliveryFee : 0;
+  $("#dfoot").innerHTML = `
+    <div class="dopt">
+      <label><span><input type="radio" name="dl" value="collect" ${DELIVERY==="collect"?"checked":""}> Click &amp; collect, Rose Lane</span><b>Free</b></label>
+      <label><span><input type="radio" name="dl" value="deliver" ${DELIVERY==="deliver"?"checked":""}> Local Liverpool delivery</span><b>${need>0?gbp(CONFIG.deliveryFee):"Free"}</b></label>
+    </div>
+    <details class="giftnote" ${NOTE?"open":""}><summary>🎁 Add a gift note</summary><textarea id="gnote" placeholder="Your message (we'll handwrite it on a card)">${NOTE}</textarea></details>
+    <div class="tot"><span>Total</span><b>${gbp(sub+fee)}</b></div>
+    <button class="btn solid block" onclick="checkout()">Secure checkout</button>
+    <div class="pay"><span>Card</span>·<span>Apple Pay</span>·<span>Google Pay</span>·<span>PayPal</span></div>`;
+  document.querySelectorAll('input[name="dl"]').forEach(r=>r.onchange=e=>{DELIVERY=e.target.value;renderBag();});
+  const g=$("#gnote"); if(g) g.oninput=e=>NOTE=e.target.value;
+}
+function openBag(){ $("#drawer").classList.add("open"); $("#scrim").classList.add("open"); $("#drawer").setAttribute("aria-hidden","false"); }
+function closeBag(){ $("#drawer").classList.remove("open"); $("#scrim").classList.remove("open"); $("#drawer").setAttribute("aria-hidden","true"); }
+$("#bagBtn").onclick=openBag; $("#closeBag").onclick=closeBag; $("#scrim").onclick=closeBag;
+document.addEventListener("keydown",e=>{ if(e.key==="Escape") closeBag(); });
+
+/* Developer: replace with a POST to your server that creates a Stripe Checkout Session. */
+function checkout(){
+  const payload = { items: BAG.map(l=>({slug:l.s, name:bySlug(l.s).name, unit_amount:Math.round(bySlug(l.s).price*100), quantity:l.q})), delivery:DELIVERY, giftNote:NOTE };
+  console.log("Stripe checkout payload", payload);
+  toast("Preview: checkout will open Stripe here");
+}
+
+/* ================= components ================= */
+function card(p){
+  const b = p.badge ? `<span class="badge ${p.cat==="gift"?"gift":""} ${p.hand?"hand":""}">${p.badge}</span>` : "";
+  return `<article class="card">
+    <div class="media" onclick="go('#/p/${p.slug}')">${b}${img(p)}</div>
+    <div class="body">
+      <h3 onclick="go('#/p/${p.slug}')">${p.name}</h3>
+      <div class="sub">${p.sub}</div>
+      <div class="foot"><span class="price">${gbp(p.price)}</span>
+        <button class="add" onclick="addBtn(this,'${p.slug}')">Add to bag</button></div>
+    </div></article>`;
+}
+function addBtn(el,slug){ add(slug); el.classList.add("done"); el.textContent="Added ✓"; setTimeout(()=>{el.classList.remove("done");el.textContent="Add to bag";},1600); }
+const sachaAvatar = ()=> CONFIG.sachaPhoto ? `<img src="${CONFIG.sachaPhoto}" alt="Sacha">` : "S";
+const noteBlock = (quote)=> `
+  <div class="note"><div class="avatar">${sachaAvatar()}</div>
+    <div><span class="hand">Sacha's note</span>
+      <blockquote>“${quote}”</blockquote>
+      <cite>Sacha · Hair &amp; Home, Rose Lane</cite></div></div>`;
+const scalpBanner = ()=> `
+  <div class="banner" id="scalp"><div style="position:relative;z-index:1">
+    <span class="eyebrow">Not sure where to start?</span>
+    <h2>Book a free scalp check</h2>
+    <p>Ten minutes in the chair with Sacha. She'll look at your scalp, talk through what's going on and point you to the right routine. No obligation to buy.</p></div>
+    <a class="btn light" style="position:relative;z-index:1" href="${CONFIG.bookingUrl}">Book your free check</a></div>`;
+
+/* ================= quiz ================= */
+let QA = {hair:null, thin:null};
+function quizBlock(){
+  const opt=(k,v,l)=>`<button class="opt" aria-pressed="${QA[k]===v}" onclick="QA.${k}='${v}';renderQuiz()">${l}</button>`;
+  let result = `<div class="match" style="grid-template-columns:1fr"><p style="color:var(--muted)">Answer both questions and we'll show your match.</p></div>`;
+  if(QA.hair && QA.thin){
+    const sys = QA.hair==="natural" ? (QA.thin==="light"?1:2) : (QA.thin==="light"?3:4);
+    const trial = PRODUCTS.find(p=>p.cat==="kit"&&p.sys===sys&&p.slug.includes("trial"));
+    const loyal = PRODUCTS.find(p=>p.cat==="kit"&&p.sys===sys&&p.slug.includes("loyalty"));
+    result = `<div class="match">${img(trial)}<div><span class="eyebrow">Your match</span><h3>System ${sys}</h3>
+      <div style="font-size:.88rem;color:var(--muted)">${trial.sub.split(" · ").slice(0,2).join(" · ")}</div>
+      <div class="row"><button class="add" onclick="addBtn(this,'${trial.slug}')">Add trial kit · ${gbp(trial.price)}</button>
+      ${loyal?`<button class="chip" onclick="go('#/p/${loyal.slug}')">Full size · ${gbp(loyal.price)}</button>`:""}</div></div></div>`;
+  }
+  return `<div class="quiz" id="quiz">
+    <div><span class="eyebrow">Find my system</span><h2>Which Nioxin is right for me?</h2>
+      <p style="color:var(--muted)">Two quick questions. Still not sure? Pop in and Sacha will check your scalp for free.</p></div>
+    <div>
+      <div class="q"><p>1. Is your hair coloured or chemically treated?</p><div class="opts">${opt("hair","natural","No, it's natural")}${opt("hair","coloured","Yes, coloured or treated")}</div></div>
+      <div class="q"><p>2. How would you describe the thinning?</p><div class="opts">${opt("thin","light","Light: my parting looks wider")}${opt("thin","progressed","Progressed: I can see my scalp")}</div></div>
+      <div id="quizResult">${result}</div>
+    </div></div>`;
+}
+function renderQuiz(){ const q=$("#quiz"); if(q) q.outerHTML = quizBlock(); }
+
+/* ================= pages ================= */
+function home(filter="all", jump){
+  const hero = bySlug(CONFIG.heroImage);
+  const gifts = PRODUCTS.filter(p=>p.cat==="gift");
+  const list = filter==="all" ? PRODUCTS.filter(p=>p.cat!=="gift") : PRODUCTS.filter(p=>p.cat===filter);
+  $("#app").innerHTML = `
+  <section class="hero"><div class="wrap hero-grid">
+    <div>
+      <span class="eyebrow">Sacha's picks · Nioxin &amp; Christmas gift sets</span>
+      <h1>Salon-chosen haircare, from Rose Lane.</h1>
+      <p class="lead">The thinning-hair routines Sacha uses in the salon, now ready to take home. Collect free from Rose Lane or get it delivered across Liverpool.</p>
+      <div class="ctas"><a class="btn solid" href="#/gifts">Shop gift sets</a><a class="btn ghost" href="#/quiz">Find my system</a></div>
+      <div class="trust"><span>${icon.pin} Free click &amp; collect</span><span>${icon.van} Local Liverpool delivery</span><span>${icon.lock} Secure checkout</span></div>
+    </div>
+    <div class="hero-art${CONFIG.heroPhoto?" photo":""}">${CONFIG.heroPhoto?`<img src="${CONFIG.heroPhoto}" alt="Inside Hair &amp; Home on Rose Lane">`:(hero?img(hero):"")}
+      <span class="price-pill">Gift sets ${gbp(gifts[0].price)}</span>
+      <div class="tag"><span class="hand">Sacha's pick for Christmas</span><small>A full Nioxin routine, gift-boxed and ready to give.</small></div>
+    </div>
+  </div></section>
+
+  <section class="block" id="gifts" style="padding-top:1rem"><div class="wrap">
+    <div class="sec-head"><div><span class="eyebrow">🎄 Order by ${CONFIG.christmasCutoff} for Christmas</span><h2>Christmas gift sets</h2></div>
+      <p>Gift-boxed Nioxin routines. Add a handwritten gift note at checkout.</p></div>
+    <div class="grid">${gifts.map(card).join("")}</div>
+  </div></section>
+
+  <section class="block" style="padding-top:0"><div class="wrap">${quizBlock()}</div></section>
+
+  <section class="block" id="all" style="padding-top:0"><div class="wrap">
+    <div class="sec-head"><div><span class="eyebrow">Nioxin, chosen by Sacha</span><h2>Thinning hair &amp; scalp care</h2></div>
+      <p>Every product here is one we use and recommend in the salon.</p></div>
+    <div class="chips" role="group" aria-label="Filter">${Object.entries(CATS).filter(([k])=>k!=="gift").map(([k,v])=>`<button class="chip" aria-pressed="${filter===k}" onclick="home('${k}','all')">${v}</button>`).join("")}</div>
+    <div class="grid">${list.map(card).join("")}</div>
+  </div></section>
+
+  <section class="block" style="padding-top:0"><div class="wrap">
+    <div class="sec-head"><h2>Why buy from Hair &amp; Home</h2></div>
+    <div class="why">
+      <div><h3>Advice, not just products</h3><p>Every order comes with Sacha's recommendation, and a free scalp check if you're unsure.</p></div>
+      <div><h3>Ready in the salon</h3><p>Choose click &amp; collect and pick it up on Rose Lane. Free, always.</p></div>
+      <div><h3>Genuine stock</h3><p>Bought direct from Wella as a Wella salon, never from third-party sellers.</p></div>
+      <div><h3>A real person</h3><p>Questions about your order? Message the salon and talk to someone who knows your hair.</p></div>
+    </div>
+  </div></section>
+
+  <section class="block" style="padding-top:0"><div class="wrap">${noteBlock("If your parting is looking wider or you can see more scalp than you'd like, start with the trial kit for 30 days. Then come in and we'll look at how it's going together.")}</div></section>
+
+  <section class="block" style="padding-top:0"><div class="wrap">${scalpBanner()}</div></section>
+
+  <section class="block" style="padding-top:0"><div class="wrap">
+    <div class="reviews"><div><span class="eyebrow">Reviews</span><h2 class="serif" style="font-size:2rem;margin-top:.3rem">What our clients say</h2>
+      <p style="color:var(--muted)">Read real reviews of the salon on Google.</p></div>
+      <a class="btn ghost" href="${CONFIG.reviewsUrl}">${icon.star.replace('<svg','<svg style="width:16px;height:16px;stroke:currentColor"')} Read our Google reviews</a></div>
+      <!-- Developer: embed real Google reviews here. Never add invented testimonials. -->
+  </div></section>
+
+  <section class="block faq" id="faq" style="padding-top:0"><div class="wrap">
+    <div class="sec-head"><h2>Questions</h2></div>
+    <details><summary>Which Nioxin system do I need?</summary><p>Systems 1 and 2 are for natural (uncoloured) hair; 3 and 4 are for coloured or chemically treated hair. 1 and 3 are for light thinning, 2 and 4 for progressed thinning. Use the quiz above, or book a free scalp check with Sacha.</p></details>
+    <details><summary>Trial kit or loyalty kit?</summary><p>Start with a trial kit to see how your hair responds. Once you know it suits you, the loyalty kit gives you larger sizes.</p></details>
+    <details><summary>How does click &amp; collect work?</summary><p>Choose click &amp; collect at checkout and we'll message you when your order is ready to pick up from the salon on Rose Lane. It's always free.</p></details>
+    <details><summary>Do you deliver?</summary><p>Yes, across Liverpool for ${gbp(CONFIG.deliveryFee)}, free on orders over ${gbp(CONFIG.freeDeliveryOver)}.</p></details>
+    <details><summary>Can I return something?</summary><p>Unopened products can be returned within 14 days of delivery or collection. For hygiene reasons we can't accept opened products unless they're faulty.</p></details>
+  </div></section>`;
+  if(jump){ const el=document.getElementById(jump); if(el) el.scrollIntoView({behavior:"smooth"}); }
+}
+
+let CURRENT=null;
+function pdp(slug){
+  const p = bySlug(slug); if(!p) return home();
+  CURRENT = p;
+  const pair = bySlug(PAIRS[p.cat]) && PAIRS[p.cat]!==p.slug ? bySlug(PAIRS[p.cat]) : null;
+  const related = PRODUCTS.filter(x=>x.slug!==p.slug && (x.cat===p.cat || x.slug===PAIRS[p.cat])).slice(0,3);
+  const thumbs = Array.from({length:p.gallery+1},(_,i)=>i);
+  const note = p.cat==="gift" ? "These sets make a lovely present for anyone who's mentioned their hair feels thinner. It's a full routine, beautifully boxed."
+             : p.cat==="serum" ? "Use this alongside your Nioxin system, not instead of it. Consistency is what makes the difference."
+             : p.cat==="scalp" ? "A happy scalp comes first. If it's flaky or uncomfortable, sort that before anything else."
+             : "Give it a proper 30 days, every wash. Then pop in and we'll look at how it's going together.";
+  $("#app").innerHTML = `
+  <div class="wrap">
+    <div class="crumbs"><a href="#/">Shop</a> / <a href="#/${p.cat==="gift"?"gifts":"all"}">${CATS[p.cat]}</a> / ${p.name}</div>
+    <div class="pdp">
+      <div class="gallery">
+        <div class="main" id="mainImg">${img(p,0)}</div>
+        <div class="thumbs" role="list">${thumbs.map(i=>`<button role="listitem" aria-label="Image ${i+1}" aria-current="${i===0}" onclick="setImg(${i},this)">${img(p,i)}</button>`).join("")}</div>
+      </div>
+      <div class="info">
+        <div class="badges">${p.badge?`<span class="badge ${p.cat==="gift"?"gift":""} ${p.hand?"hand":""}">${p.badge}</span>`:""}<span class="badge">Nioxin by Wella</span></div>
+        <h1>${p.name}</h1>
+        <p class="sub">${p.sub}</p>
+        <div class="pr"><span class="price">${gbp(p.price)}</span><span class="stock">In stock · ready to collect from the salon</span></div>
+        <div class="buy" id="buyRow">
+          <div class="qty"><button aria-label="Less" onclick="pq(-1)">−</button><span id="pq">1</span><button aria-label="More" onclick="pq(1)">+</button></div>
+          <button class="btn solid" onclick="addPdp()">Add to bag</button>
+        </div>
+        ${pair?`<label class="upsell"><input type="checkbox" id="upsell"> ${img(pair)}<span><b class="serif" style="font-weight:400">Complete the routine: ${pair.name}</b><small>Add for ${gbp(pair.price)}</small></span></label>`:""}
+        <ul class="perks">
+          <li>${icon.pin}<span><b style="font-weight:500;color:var(--ink)">Free click &amp; collect</b> from the salon on Rose Lane</span></li>
+          <li>${icon.van}<span>Local Liverpool delivery ${gbp(CONFIG.deliveryFee)}, free over ${gbp(CONFIG.freeDeliveryOver)}</span></li>
+          <li>${icon.ret}<span>Easy returns on unopened products within 14 days</span></li>
+          <li>${icon.lock}<span>Secure checkout: card, Apple Pay, Google Pay, PayPal</span></li>
+        </ul>
+        <div class="faq acc">
+          <details open><summary>What it does</summary><p>${p.what}</p></details>
+          ${p.inside?`<details><summary>What's inside</summary><p>${p.inside}</p></details>`:""}
+          ${p.cat==="kit"||p.cat==="gift"?`<details><summary>How to use</summary><p><b>1. Cleanse</b> with the shampoo, massaging into the scalp. <b>2. Condition</b> from roots to ends and rinse. <b>3. Treat:</b> apply the leave-in treatment to the scalp and don't rinse. Use every wash for at least 30 days.</p></details>`:""}
+          <details><summary>Delivery &amp; collection</summary><p>Click &amp; collect is free; we'll message you when it's ready. Local Liverpool delivery is ${gbp(CONFIG.deliveryFee)}, free over ${gbp(CONFIG.freeDeliveryOver)}.</p></details>
+        </div>
+      </div>
+    </div>
+    ${p.cat==="kit"?`<section class="block" style="padding-top:0">${quizBlock()}</section>`:""}
+    <section class="block" style="padding-top:0">${noteBlock(note)}</section>
+    <section class="block" style="padding-top:0">${scalpBanner()}</section>
+    <section class="block" style="padding-top:0">
+      <div class="sec-head"><div><span class="eyebrow">Chosen by Sacha</span><h2>Pairs well with</h2></div></div>
+      <div class="grid three">${related.map(card).join("")}</div>
+    </section>
+  </div>`;
+  $("#sbName").textContent = p.name; $("#sbPrice").textContent = gbp(p.price);
+  const m=$("#mainImg");
+  m.onmousemove=e=>{const r=m.getBoundingClientRect(); m.style.setProperty("--zx",((e.clientX-r.left)/r.width*100)+"%"); m.style.setProperty("--zy",((e.clientY-r.top)/r.height*100)+"%");};
+  m.onclick=()=>m.classList.toggle("zoom"); m.onmouseleave=()=>m.classList.remove("zoom");
+}
+let PQ=1;
+function pq(d){ PQ=Math.max(1,PQ+d); $("#pq").textContent=PQ; }
+function setImg(i,btn){ $("#mainImg").innerHTML = img(CURRENT,i); document.querySelectorAll(".thumbs button").forEach(b=>b.setAttribute("aria-current","false")); btn.setAttribute("aria-current","true"); }
+function addPdp(){ add(CURRENT.slug,PQ,true); const u=$("#upsell"); if(u&&u.checked) add(PAIRS[CURRENT.cat],1,true); PQ=1; const q=$("#pq"); if(q) q.textContent=1; openBag(); }
+$("#sbAdd").onclick=addPdp;
+
+/* sticky mobile buy bar: show once the main Add button scrolls out of view */
+const io = new IntersectionObserver(es=>es.forEach(e=>$("#stickyBuy").classList.toggle("show", !e.isIntersecting && location.hash.startsWith("#/p/"))),{threshold:0});
+
+/* ================= router ================= */
+function go(h){ location.hash=h; }
+function route(){
+  const h = location.hash || "#/";
+  PQ=1; $("#stickyBuy").classList.remove("show"); io.disconnect();
+  if(h.startsWith("#/p/")){ pdp(h.slice(4)); window.scrollTo(0,0); const b=$("#buyRow"); if(b) io.observe(b); }
+  else if(h==="#/gifts"){ home("all","gifts"); }
+  else if(h==="#/all"){ home("all","all"); }
+  else if(h==="#/quiz"){ home("all","quiz"); }
+  else if(h==="#/scalp"){ home("all","scalp"); }
+  else if(h==="#/faq"){ home("all","faq"); }
+  else { home(); window.scrollTo(0,0); }
+}
+$("#announce").innerHTML = `🎄 <b>Order by ${CONFIG.christmasCutoff}</b> for Christmas · Free click &amp; collect on Rose Lane · Free Liverpool delivery over ${gbp(CONFIG.freeDeliveryOver)}`;
+$("#footBook").href = CONFIG.bookingUrl;
+window.addEventListener("hashchange", route);
+route(); renderBag();
+</script>
+</body>
+</html>
