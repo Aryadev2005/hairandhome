@@ -322,24 +322,34 @@ const CONFIG = {
   reviewsUrl: "#",               // TODO Google reviews link
   sachaPhoto: "",                // e.g. "images/sacha.jpg"
   heroImage: "giftset-thickening-nourishing-anti-breakage", // product shown if heroPhoto is empty
-  heroPhoto: "../img/shop-shelves.jpg", // real salon photo
+  heroPhoto: "images/christmas-display.jpg", // Sacha's own photo of the gift sets in the salon
 };
 
 /* Prices are retail prices to CONFIRM with Sacha before launch. */
 const PRODUCTS = [
-  {slug:"giftset-thickening-nourishing-anti-breakage", name:"Thickening, Nourishing & Anti-Breakage Gift Set", cat:"gift", price:52, gallery:11, badge:"Gift set",
+  {slug:"wella-make-it-strong", pre:"", brand:"Wella Professionals", name:"Ultimate Repair: Make It Strong", cat:"gift", price:52, gallery:2, badge:"Christmas gift",
+   sub:"For damaged hair · 3-step gift set",
+   what:"Wella Professionals' Ultimate Repair routine for damaged hair, gift-boxed for Christmas. Powered by AHA and omega-9 to help strengthen hair from the inside out and leave it smooth and shiny.",
+   inside:"Ultimate Repair Shampoo 250ml + Ultimate Repair Conditioner 200ml + Ultimate Repair Miracle Hair Rescue 30ml"},
+  {slug:"wella-make-it-last", pre:"", brand:"Wella Professionals", name:"Ultimate Color: Make It Last", cat:"gift", price:52, gallery:2, badge:"Christmas gift",
+   sub:"For coloured hair · gift set",
+   what:"Wella Professionals' Ultimate Color routine to help keep coloured hair vibrant and glossy between salon visits, gift-boxed for Christmas."},
+  {slug:"wella-make-it-smooth", pre:"", brand:"Wella Professionals", name:"Ultimate Smooth: Make It Smooth", cat:"gift", price:52, gallery:2, badge:"Christmas gift",
+   sub:"For dry, frizzy hair · gift set",
+   what:"Wella Professionals' Ultimate Smooth routine to help tame frizz and leave dry hair soft, smooth and shiny, gift-boxed for Christmas."},
+  {slug:"giftset-thickening-nourishing-anti-breakage", name:"Thickening, Nourishing & Anti-Breakage Gift Set", cat:"niogift", price:52, gallery:11, badge:"Nioxin gift set",
    sub:"For coloured or dry hair with light thinning",
    what:"Nioxin's 3-step System Kit 3, formulated with niacinamide and biotin, plus a free full-size Anti-Breakage Strengthening Mask to help strengthen hair and reduce breakage.",
    inside:"System Kit 3 (shampoo, conditioner, leave-in treatment) + full-size Anti-Breakage Strengthening Mask"},
-  {slug:"giftset-thickening-anti-breakage", name:"Thickening & Anti-Breakage Gift Set", cat:"gift", price:52, gallery:11, badge:"Gift set",
+  {slug:"giftset-thickening-anti-breakage", name:"Thickening & Anti-Breakage Gift Set", cat:"niogift", price:52, gallery:11, badge:"Nioxin gift set",
    sub:"For natural hair with light thinning",
    what:"Nioxin's 3-step System Kit 1 to thicken and strengthen, plus a free full-size Anti-Breakage Strengthening Mask to help protect against breakage.",
    inside:"System Kit 1 (shampoo, conditioner, leave-in treatment) + free full-size Anti-Breakage Strengthening Mask"},
-  {slug:"giftset-density-nourishing-anti-breakage", name:"Density, Nourishing & Anti-Breakage Gift Set", cat:"gift", price:52, gallery:11, badge:"Gift set",
+  {slug:"giftset-density-nourishing-anti-breakage", name:"Density, Nourishing & Anti-Breakage Gift Set", cat:"niogift", price:52, gallery:11, badge:"Nioxin gift set",
    sub:"For coloured or dry hair with progressed thinning",
    what:"Nioxin's 3-step System Kit 4 to boost density and nourish while protecting colour, plus a free full-size Anti-Breakage Strengthening Mask.",
    inside:"System Kit 4 (shampoo, conditioner, leave-in treatment) + free full-size Anti-Breakage Strengthening Mask"},
-  {slug:"giftset-density-anti-breakage", name:"Density & Anti-Breakage Gift Set", cat:"gift", price:52, gallery:11, badge:"Gift set",
+  {slug:"giftset-density-anti-breakage", name:"Density & Anti-Breakage Gift Set", cat:"niogift", price:52, gallery:11, badge:"Nioxin gift set",
    sub:"For natural hair with progressed thinning",
    what:"Nioxin's 3-step System Kit 2 to boost hair density, plus a free full-size Anti-Breakage Strengthening Mask to help strengthen hair and protect against breakage.",
    inside:"System Kit 2 (shampoo, conditioner, leave-in treatment) + free full-size Anti-Breakage Strengthening Mask"},
@@ -378,14 +388,14 @@ const PRODUCTS = [
   {slug:"scalp-recovery-soothing-serum-100ml", name:"Scalp Recovery Soothing Serum", cat:"scalp", price:31.50, gallery:9,
    sub:"Anti-dandruff leave-on serum · 100ml", what:"A leave-on anti-dandruff serum from Nioxin's Scalp Recovery range, with pyrithione zinc, for an itchy, flaky scalp. Apply directly to the scalp, massage in and don't rinse. Suitable for all hair types."},
 ];
-const PAIRS = { gift:"hair-booster-serum-100ml", kit:"hair-booster-serum-100ml", serum:"system2-trial-kit", scalp:"scalp-recovery-soothing-serum-100ml" };
-const CATS = {all:"Everything", gift:"Gift sets", kit:"System kits", serum:"Serums", scalp:"Scalp care"};
+const PAIRS = { niogift:"hair-booster-serum-100ml", kit:"hair-booster-serum-100ml", serum:"system2-trial-kit", scalp:"scalp-recovery-soothing-serum-100ml" };
+const CATS = {all:"Everything", niogift:"Nioxin gift sets", kit:"System kits", serum:"Serums", scalp:"Scalp care", gift:"Christmas gift sets"};
 
 /* ================= helpers ================= */
 const $ = (s,el=document)=>el.querySelector(s);
 const gbp = n => "£" + n.toFixed(2);
 const bySlug = s => PRODUCTS.find(p=>p.slug===s);
-const imgSrc = (slug,i=0) => CONFIG.imgDir + "nioxin-420-" + slug + (i? "-"+i : "") + CONFIG.imgExt;
+const imgSrc = (slug,i=0) => { const p=bySlug(slug); return CONFIG.imgDir + ((p&&p.pre!==undefined)?p.pre:"nioxin-420-") + slug + (i? "-"+i : "") + CONFIG.imgExt; };
 const img = (p,i=0,cls="") => `<img src="${imgSrc(p.slug,i)}" alt="${p.name}" loading="lazy" class="${cls}" data-slug="${p.slug}" data-i="${i}" onerror="imgFail(this)">`;
 /* missing image: main shot falls back to gallery -1, gallery thumbs hide, anything else shows a soft placeholder */
 function imgFail(el){
@@ -456,7 +466,7 @@ function checkout(){
 
 /* ================= components ================= */
 function card(p){
-  const b = p.badge ? `<span class="badge ${p.cat==="gift"?"gift":""} ${p.hand?"hand":""}">${p.badge}</span>` : "";
+  const b = p.badge ? `<span class="badge ${p.cat.includes("gift")?"gift":""} ${p.hand?"hand":""}">${p.badge}</span>` : "";
   return `<article class="card">
     <div class="media" onclick="go('#/p/${p.slug}')">${b}${img(p)}</div>
     <div class="body">
@@ -513,28 +523,28 @@ function home(filter="all", jump){
   $("#app").innerHTML = `
   <section class="hero"><div class="wrap hero-grid">
     <div>
-      <span class="eyebrow">Sacha's picks · Nioxin &amp; Christmas gift sets</span>
+      <span class="eyebrow">Sacha's picks · Wella Christmas gift sets &amp; Nioxin</span>
       <h1>Salon-chosen haircare, from Rose Lane.</h1>
-      <p class="lead">The thinning-hair routines Sacha uses in the salon, now ready to take home. Collect free from Rose Lane or get it delivered across Liverpool.</p>
+      <p class="lead">This year's Wella Christmas gift sets, plus the Nioxin thinning-hair routines Sacha uses in the salon. Collect free from Rose Lane or get them delivered across Liverpool.</p>
       <div class="ctas"><a class="btn solid" href="#/gifts">Shop gift sets</a><a class="btn ghost" href="#/quiz">Find my system</a></div>
       <div class="trust"><span>${icon.pin} Free click &amp; collect</span><span>${icon.van} Local Liverpool delivery</span><span>${icon.lock} Secure checkout</span></div>
     </div>
     <div class="hero-art${CONFIG.heroPhoto?" photo":""}">${CONFIG.heroPhoto?`<img src="${CONFIG.heroPhoto}" alt="Inside Hair &amp; Home on Rose Lane">`:(hero?img(hero):"")}
-      <span class="price-pill">Gift sets ${gbp(gifts[0].price)}</span>
-      <div class="tag"><span class="hand">Sacha's pick for Christmas</span><small>A full Nioxin routine, gift-boxed and ready to give.</small></div>
+      <span class="price-pill">Gift sets from ${gbp(Math.min(...gifts.map(g=>g.price)))}</span>
+      ${CONFIG.heroPhoto?"":`<div class="tag"><span class="hand">Just landed in the salon</span><small>Wella's Christmas gift sets, boxed and ready to give.</small></div>`}
     </div>
   </div></section>
 
   <section class="block" id="gifts" style="padding-top:1rem"><div class="wrap">
-    <div class="sec-head"><div><span class="eyebrow">🎄 Order by ${CONFIG.christmasCutoff} for Christmas</span><h2>Christmas gift sets</h2></div>
-      <p>Gift-boxed Nioxin routines. Add a handwritten gift note at checkout.</p></div>
-    <div class="grid">${gifts.map(card).join("")}</div>
+    <div class="sec-head"><div><span class="eyebrow">🎄 Order by ${CONFIG.christmasCutoff} for Christmas</span><h2>Wella Christmas gift sets</h2></div>
+      <p>The sets on our shelves this Christmas, each a full salon routine in a gift box. Add a handwritten gift note at checkout.</p></div>
+    <div class="grid three">${gifts.map(card).join("")}</div>
   </div></section>
 
   <section class="block" style="padding-top:0"><div class="wrap">${quizBlock()}</div></section>
 
   <section class="block" id="all" style="padding-top:0"><div class="wrap">
-    <div class="sec-head"><div><span class="eyebrow">Nioxin, chosen by Sacha</span><h2>Thinning hair &amp; scalp care</h2></div>
+    <div class="sec-head"><div><span class="eyebrow">Nioxin, chosen by Sacha</span><h2>Nioxin: thinning hair &amp; scalp care</h2></div>
       <p>Every product here is one we use and recommend in the salon.</p></div>
     <div class="chips" role="group" aria-label="Filter">${Object.entries(CATS).filter(([k])=>k!=="gift").map(([k,v])=>`<button class="chip" aria-pressed="${filter===k}" onclick="home('${k}','all')">${v}</button>`).join("")}</div>
     <div class="grid">${list.map(card).join("")}</div>
@@ -579,7 +589,8 @@ function pdp(slug){
   const pair = bySlug(PAIRS[p.cat]) && PAIRS[p.cat]!==p.slug ? bySlug(PAIRS[p.cat]) : null;
   const related = PRODUCTS.filter(x=>x.slug!==p.slug && (x.cat===p.cat || x.slug===PAIRS[p.cat])).slice(0,3);
   const thumbs = Array.from({length:p.gallery+1},(_,i)=>i);
-  const note = p.cat==="gift" ? "These sets make a lovely present for anyone who's mentioned their hair feels thinner. It's a full routine, beautifully boxed."
+  const note = p.cat==="gift" ? "These are the sets we use and love in the salon. If you're not sure which one suits the person you're buying for, message us and we'll help you choose."
+             : p.cat==="niogift" ? "These sets make a lovely present for anyone who's mentioned their hair feels thinner. It's a full routine, beautifully boxed."
              : p.cat==="serum" ? "Use this alongside your Nioxin system, not instead of it. Consistency is what makes the difference."
              : p.cat==="scalp" ? "A happy scalp comes first. If it's flaky or uncomfortable, sort that before anything else."
              : "Give it a proper 30 days, every wash. Then pop in and we'll look at how it's going together.";
@@ -592,7 +603,7 @@ function pdp(slug){
         <div class="thumbs" role="list">${thumbs.map(i=>`<button role="listitem" aria-label="Image ${i+1}" aria-current="${i===0}" onclick="setImg(${i},this)">${img(p,i)}</button>`).join("")}</div>
       </div>
       <div class="info">
-        <div class="badges">${p.badge?`<span class="badge ${p.cat==="gift"?"gift":""} ${p.hand?"hand":""}">${p.badge}</span>`:""}<span class="badge">Nioxin by Wella</span></div>
+        <div class="badges">${p.badge?`<span class="badge ${p.cat.includes("gift")?"gift":""} ${p.hand?"hand":""}">${p.badge}</span>`:""}<span class="badge">${p.brand||"Nioxin by Wella"}</span></div>
         <h1>${p.name}</h1>
         <p class="sub">${p.sub}</p>
         <div class="pr"><span class="price">${gbp(p.price)}</span><span class="stock">In stock · ready to collect from the salon</span></div>
@@ -610,7 +621,7 @@ function pdp(slug){
         <div class="faq acc">
           <details open><summary>What it does</summary><p>${p.what}</p></details>
           ${p.inside?`<details><summary>What's inside</summary><p>${p.inside}</p></details>`:""}
-          ${p.cat==="kit"||p.cat==="gift"?`<details><summary>How to use</summary><p><b>1. Cleanse</b> with the shampoo, massaging into the scalp. <b>2. Condition</b> from roots to ends and rinse. <b>3. Treat:</b> apply the leave-in treatment to the scalp and don't rinse. Use every wash for at least 30 days.</p></details>`:""}
+          ${p.cat==="kit"||p.cat==="niogift"?`<details><summary>How to use</summary><p><b>1. Cleanse</b> with the shampoo, massaging into the scalp. <b>2. Condition</b> from roots to ends and rinse. <b>3. Treat:</b> apply the leave-in treatment to the scalp and don't rinse. Use every wash for at least 30 days.</p></details>`:""}
           <details><summary>Delivery &amp; collection</summary><p>Click &amp; collect is free; we'll message you when it's ready. Local Liverpool delivery is ${gbp(CONFIG.deliveryFee)}, free over ${gbp(CONFIG.freeDeliveryOver)}.</p></details>
         </div>
       </div>
