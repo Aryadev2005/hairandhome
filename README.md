@@ -1,6 +1,6 @@
 # Hair & Home: concept website
 
-A concept site for Hair & Home, 263a Rose Lane, Liverpool L18 5HJ, prepared by Velectico.
+A concept site for Hair & Home, 263a Rose Lane, Liverpool L18 5HJ, a Product by Codzo.
 
 Static HTML: no build step. Deploy on Vercel with the framework preset set to "Other" and no build command.
 
