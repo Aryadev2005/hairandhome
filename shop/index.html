@@ -242,6 +242,38 @@ section.block{padding:clamp(3rem,7vw,5.5rem) 0}
 .line .ph{width:72px;height:72px;font-size:0;border-radius:12px}
 .match .ph{width:110px;height:110px;font-size:0;border-radius:14px}
 .thumbs .ph{font-size:0}
+
+/* ===== motion (from the design demo, without scroll-jacking) ===== */
+.rv{opacity:0;transform:translateY(26px);transition:opacity .9s cubic-bezier(.2,.7,.2,1),transform .9s cubic-bezier(.2,.7,.2,1)}
+.rv.on{opacity:1;transform:none}
+#app.pagein{animation:pagein .55s cubic-bezier(.2,.7,.2,1)}
+@keyframes pagein{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+.hero-right{position:relative}
+.stack{position:absolute;left:-84px;bottom:-104px;width:176px;height:220px;z-index:3;cursor:pointer}
+.scard{position:absolute;inset:0;background:var(--card);border:1px solid var(--line);border-radius:18px;box-shadow:0 22px 40px -22px rgba(36,41,31,.45);overflow:hidden;transition:transform 1s cubic-bezier(.2,.75,.2,1),opacity .8s ease;will-change:transform}
+.scard img{width:100%;height:100%;object-fit:contain;padding:12%;mix-blend-mode:multiply}
+.scard[data-k="0"]{transform:rotate(-5deg);opacity:1;z-index:3}
+.scard[data-k="1"]{transform:translate(30px,-16px) rotate(4deg) scale(.94);opacity:.92;z-index:2}
+.scard[data-k="2"]{transform:translate(58px,-30px) rotate(11deg) scale(.88);opacity:.75;z-index:1}
+.scard[data-k="x"]{transform:translate(-60px,50px) rotate(-16deg) scale(.9);opacity:0;z-index:0}
+.stack:hover .scard[data-k="0"]{transform:rotate(-2deg) translateY(-6px)}
+.now{display:flex;align-items:center;gap:.4rem 1rem;flex-wrap:wrap;margin-top:2.2rem;cursor:pointer;max-width:100%}
+html,body{overflow-x:clip}
+.now[hidden]{display:none}
+.ticks{display:flex;flex-direction:column;gap:5px}
+.ticks i{display:block;width:12px;height:1px;background:var(--line);transition:width .4s,background .4s}
+.ticks i.on{width:22px;background:var(--ink)}
+.now .idx{font-size:.72rem;letter-spacing:.2em;color:var(--muted);white-space:nowrap}
+.now .nm{font-family:var(--serif);font-size:1.45rem;line-height:1.15;transition:opacity .35s}
+.now .pr{font-size:.75rem;letter-spacing:.12em;color:var(--muted);white-space:nowrap;transition:opacity .35s}
+.now.swap .nm,.now.swap .pr{opacity:0}
+.card .media{transition:transform .5s cubic-bezier(.2,.7,.2,1)}
+.bagbtn.bump{animation:bump .6s cubic-bezier(.2,.7,.2,1)}
+@keyframes bump{0%{transform:scale(1)}30%{transform:scale(1.12)}60%{transform:scale(.96)}100%{transform:scale(1)}}
+.price-pill{animation:floaty 5s ease-in-out infinite}
+@keyframes floaty{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+@media (max-width:860px){.stack{left:auto;right:14px;bottom:-44px;width:118px;height:148px}.now .nm{font-size:1.1rem;flex-basis:100%;order:3}.hero-right{margin-bottom:2.5rem}}
+@media (prefers-reduced-motion:reduce){.rv{opacity:1;transform:none}.price-pill{animation:none}#app.pagein{animation:none}}
 footer{background:var(--board);color:#C6CBBB;padding:3.5rem 0 2.5rem;margin-top:2rem}
 .fgrid{display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:2rem}
 footer h4{font-family:var(--serif);font-weight:400;font-size:1.2rem;color:var(--cream);margin-bottom:.6rem}
@@ -420,7 +452,7 @@ let DELIVERY = "collect", NOTE = "";
 const save = ()=>{ try{ localStorage.setItem("hh_bag", JSON.stringify(BAG)); }catch(e){} };
 const bagQty = ()=> BAG.reduce((a,b)=>a+b.q,0);
 const subtotal = ()=> BAG.reduce((a,b)=>a+bySlug(b.s).price*b.q,0);
-function add(slug,q=1,silent){ const l=BAG.find(x=>x.s===slug); l? l.q+=q : BAG.push({s:slug,q}); save(); renderBag(); if(!silent){ toast("Added to your bag"); } }
+function add(slug,q=1,silent){ const l=BAG.find(x=>x.s===slug); l? l.q+=q : BAG.push({s:slug,q}); save(); renderBag(); const bb=$("#bagBtn"); bb.classList.remove("bump"); void bb.offsetWidth; bb.classList.add("bump"); if(!silent){ toast("Added to your bag"); } }
 function setQ(slug,q){ const l=BAG.find(x=>x.s===slug); if(!l) return; l.q=q; if(l.q<=0) BAG=BAG.filter(x=>x.s!==slug); save(); renderBag(); }
 
 function renderBag(){
@@ -528,10 +560,14 @@ function home(filter="all", jump){
       <p class="lead">This year's Wella Christmas gift sets, plus the Nioxin thinning-hair routines Sacha uses in the salon. Collect free from Rose Lane or get them delivered across Liverpool.</p>
       <div class="ctas"><a class="btn solid" href="#/gifts">Shop gift sets</a><a class="btn ghost" href="#/quiz">Find my system</a></div>
       <div class="trust"><span>${icon.pin} Free click &amp; collect</span><span>${icon.van} Local Liverpool delivery</span><span>${icon.lock} Secure checkout</span></div>
+      <div class="now" id="now" hidden><div class="ticks" id="ticks"></div><span class="idx" id="nowIdx"></span><span class="nm" id="nowNm"></span><span class="pr" id="nowPr"></span></div>
     </div>
+    <div class="hero-right">
     <div class="hero-art${CONFIG.heroPhoto?" photo":""}">${CONFIG.heroPhoto?`<img src="${CONFIG.heroPhoto}" alt="Inside Hair &amp; Home on Rose Lane">`:(hero?img(hero):"")}
       <span class="price-pill">Gift sets from ${gbp(Math.min(...gifts.map(g=>g.price)))}</span>
       ${CONFIG.heroPhoto?"":`<div class="tag"><span class="hand">Just landed in the salon</span><small>Wella's Christmas gift sets, boxed and ready to give.</small></div>`}
+    </div>
+    <div class="stack" id="stack" aria-label="Featured gift sets" hidden></div>
     </div>
   </div></section>
 
@@ -580,6 +616,7 @@ function home(filter="all", jump){
     <details><summary>Can I return something?</summary><p>Unopened products can be returned within 14 days of delivery or collection. For hygiene reasons we can't accept opened products unless they're faulty.</p></details>
   </div></section>`;
   if(jump){ const el=document.getElementById(jump); if(el) el.scrollIntoView({behavior:"smooth"}); }
+  if(typeof reveal==="function") setTimeout(()=>{ reveal(); tilt(); heroStack(); },0);
 }
 
 let CURRENT=null;
@@ -648,6 +685,51 @@ $("#sbAdd").onclick=addPdp;
 /* sticky mobile buy bar: show once the main Add button scrolls out of view */
 const io = new IntersectionObserver(es=>es.forEach(e=>$("#stickyBuy").classList.toggle("show", !e.isIntersecting && location.hash.startsWith("#/p/"))),{threshold:0});
 
+
+/* ===== motion ===== */
+const REDUCED = matchMedia("(prefers-reduced-motion: reduce)").matches;
+let revealIO;
+function reveal(){
+  if(revealIO) revealIO.disconnect();
+  const els = document.querySelectorAll("#app .sec-head, #app .card, #app .quiz, #app .why > div, #app .note, #app .banner, #app .reviews, #app .faq details, #app .gallery, #app .info");
+  if(REDUCED || !("IntersectionObserver" in window)){ els.forEach(e=>e.classList.add("rv","on")); return; }
+  revealIO = new IntersectionObserver(es=>es.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add("on"); revealIO.unobserve(e.target);} }),{rootMargin:"0px 0px -8% 0px"});
+  const groups = new Map();
+  els.forEach(e=>{ if(e.classList.contains("on")) return; e.classList.add("rv"); const g=e.parentElement; const i=groups.get(g)||0; groups.set(g,i+1); e.style.transitionDelay = Math.min(i,6)*70+"ms"; revealIO.observe(e); });
+}
+function tilt(){
+  if(REDUCED || matchMedia("(hover: none)").matches) return;
+  document.querySelectorAll("#app .card .media").forEach(m=>{
+    m.onmousemove=e=>{const r=m.getBoundingClientRect(),x=(e.clientX-r.left)/r.width-.5,y=(e.clientY-r.top)/r.height-.5; m.style.transform=`perspective(700px) rotateY(${x*6}deg) rotateX(${-y*6}deg)`;};
+    m.onmouseleave=()=>{m.style.transform="";};
+  });
+}
+let stackTimer, stackGen=0;
+async function heroStack(){
+  clearInterval(stackTimer); const gen=++stackGen;
+  const st=$("#stack"), now=$("#now"); if(!st) return;
+  const pool = PRODUCTS.filter(p=>p.cat==="gift").concat(PRODUCTS.filter(p=>p.cat==="niogift"));
+  const ok = (await Promise.all(pool.map(p=>new Promise(r=>{const i=new Image(); i.onload=()=>r(p); i.onerror=()=>r(null); i.src=imgSrc(p.slug,0);})))).filter(Boolean).slice(0,7);
+  if(gen!==stackGen || ok.length<2 || st!==$("#stack")) return;
+  st.innerHTML = ok.map(p=>`<div class="scard"><img src="${imgSrc(p.slug,0)}" alt="${p.name}"></div>`).join("");
+  $("#ticks").innerHTML = ok.map(()=>"<i></i>").join("");
+  st.hidden=false; now.hidden=false;
+  let cur=0; const cards=[...st.children], ticks=[...$("#ticks").children], N=ok.length;
+  const paint=()=>{
+    cards.forEach((c,i)=>{const k=(i-cur+N)%N; c.dataset.k = k<3? k : "x";});
+    ticks.forEach((t,i)=>t.classList.toggle("on",i===cur));
+    now.classList.add("swap");
+    setTimeout(()=>{ if(!$("#nowIdx")) return; $("#nowIdx").textContent=String(cur+1).padStart(2,"0")+" / "+String(N).padStart(2,"0"); $("#nowNm").textContent=ok[cur].name; $("#nowPr").textContent=gbp(ok[cur].price); now.classList.remove("swap"); }, REDUCED?0:280);
+  };
+  const open=()=>go("#/p/"+ok[cur].slug);
+  st.onclick=open; now.onclick=open;
+  paint();
+  if(REDUCED) return;
+  let paused=false; st.onmouseenter=()=>paused=true; st.onmouseleave=()=>paused=false;
+  stackTimer=setInterval(()=>{ if(paused||document.hidden||!document.body.contains(st)) return; cur=(cur+1)%N; paint(); },3200);
+}
+function afterRender(){ const a=$("#app"); a.classList.remove("pagein"); void a.offsetWidth; if(!REDUCED) a.classList.add("pagein"); reveal(); tilt(); }
+
 /* ================= router ================= */
 function go(h){ location.hash=h; }
 function route(){
@@ -660,6 +742,7 @@ function route(){
   else if(h==="#/scalp"){ home("all","scalp"); }
   else if(h==="#/faq"){ home("all","faq"); }
   else { home(); window.scrollTo(0,0); }
+  afterRender();
 }
 $("#announce").innerHTML = `🎄 <b>Order by ${CONFIG.christmasCutoff}</b> for Christmas · Free click &amp; collect on Rose Lane · Free Liverpool delivery over ${gbp(CONFIG.freeDeliveryOver)}`;
 $("#footBook").href = CONFIG.bookingUrl;
