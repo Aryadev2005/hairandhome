@@ -389,7 +389,7 @@ const img = (p,i=0,cls="") => `<img src="${imgSrc(p.slug,i)}" alt="${p.name}" lo
 /* missing image: main shot falls back to gallery -1, gallery thumbs hide, anything else shows a soft placeholder */
 function imgFail(el){
   const slug=el.dataset.slug, i=+el.dataset.i, p=bySlug(slug);
-  if(i===0 && !el.dataset.fb){ el.dataset.fb="1"; el.src=imgSrc(slug,1); return; }
+  if(i===0 || el.dataset.fb){ const next=(+el.dataset.fb||0)+1; if(p && next<=p.gallery){ el.dataset.fb=next; el.src=imgSrc(slug,next); return; } }
   const thumb=el.closest(".thumbs button"); if(thumb){ thumb.remove(); return; }
   el.outerHTML='<div class="ph">'+(p?p.name:"")+'</div>';
 }
