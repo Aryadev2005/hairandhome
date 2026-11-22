@@ -1,0 +1,14 @@
+{
+  "name": "hairandhome",
+  "private": true,
+  "type": "module",
+  "description": "Hair & Home, Rose Lane: static site + one Stripe checkout function",
+  "engines": { "node": ">=20" },
+  "scripts": {
+    "test": "node --test tests/*.test.js",
+    "sync": "node scripts/sync-partials.mjs"
+  },
+  "dependencies": {
+    "stripe": "^17.0.0"
+  }
+}
